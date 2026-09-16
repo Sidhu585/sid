@@ -1,0 +1,60 @@
+// Prisma schema for the birthday celebration app.
+//
+// Local development uses SQLite (zero setup). For production on Vercel,
+// switch the datasource to a hosted database (Postgres works great with
+// providers like Neon or Vercel Postgres) — see README.md for the exact
+// steps. The schema itself does not need to change between the two.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// A single row exists for the MVP (Siddhant). The model is intentionally
+// shaped so more birthdays can be added later without a schema rewrite.
+model Birthday {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  name          String
+  course        String
+  college       String
+  birthdayMonth Int
+  birthdayDay   Int
+  targetAmount  Int?
+  upiId         String
+  upiName       String
+  createdAt     DateTime @default(now())
+
+  contributions Contribution[]
+  wishes        Wish[]
+}
+
+// SQLite has no native enum type in Prisma, so status is a plain string
+// constrained in application code to "pending" | "verified" (see types/index.ts).
+model Contribution {
+  id              String   @id @default(cuid())
+  birthdayId      String
+  birthday        Birthday @relation(fields: [birthdayId], references: [id])
+  contributorName String
+  amount          Int
+  message         String?
+  status          String   @default("pending")
+  createdAt       DateTime @default(now())
+
+  @@index([birthdayId])
+}
+
+model Wish {
+  id         String   @id @default(cuid())
+  birthdayId String
+  birthday   Birthday @relation(fields: [birthdayId], references: [id])
+  name       String
+  message    String
+  createdAt  DateTime @default(now())
+
+  @@index([birthdayId])
+}
