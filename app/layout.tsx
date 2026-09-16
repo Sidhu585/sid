@@ -20,16 +20,28 @@ const sans = Inter({
 });
 
 const title = "Sid's Birthday";
-const description = "Celebrate Siddhant's birthday. Wish him or contribute to the celebration.";
+const description = "Celebrate Sid's birthday. Wish him or contribute to the celebration.";
+
+// Defensive: a malformed NEXT_PUBLIC_SITE_URL (stray quotes, missing
+// protocol, etc.) should never crash the entire build — every page reads
+// this file. Fall back to a safe placeholder instead of throwing.
+function safeSiteUrl(): URL {
+  try {
+    return new URL(SITE_CONFIG.siteUrl);
+  } catch {
+    return new URL("http://localhost:3000");
+  }
+}
+const siteUrl = safeSiteUrl();
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_CONFIG.siteUrl),
+  metadataBase: siteUrl,
   title,
   description,
   openGraph: {
     title,
     description,
-    url: SITE_CONFIG.siteUrl,
+    url: siteUrl.toString(),
     siteName: title,
     type: "website",
   },
@@ -49,7 +61,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${display.variable} ${sans.variable}`}>
-      <body className="bg-black font-sans text-paper antialiased">
+      <body className="bg-ink font-sans text-paper antialiased">
         <ToastProvider>{children}</ToastProvider>
       </body>
     </html>

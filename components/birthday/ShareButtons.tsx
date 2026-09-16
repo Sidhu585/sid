@@ -27,7 +27,7 @@ export function ShareButtons({ name, course, college }: ShareButtonsProps) {
   }, []);
 
   const buildMessage = (url: string) =>
-    `🎂 Aaj ${name}'s birthday hai!\n\n${course} • ${college}\n\nUsko wish karo aur birthday celebration me contribute karna ho to yahan karo:\n${url}`;
+    `🎂 It's ${name}'s birthday today!\n\n${course} • ${college}\n\nSend a wish or join the celebration here:\n${url}`;
 
   const getUrl = () => window.location.href;
 
